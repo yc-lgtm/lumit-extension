@@ -5,9 +5,13 @@
   "version": "1.1.0",
   "publisher": "lumit",
   "license": "MIT",
+  "homepage": "https://github.com/yc-lgtm/lumit-extension",
+  "bugs": {
+    "url": "https://github.com/yc-lgtm/lumit-extension/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ychou/lumit.git"
+    "url": "https://github.com/yc-lgtm/lumit-extension.git"
   },
   "engines": {
     "vscode": "^1.90.0"

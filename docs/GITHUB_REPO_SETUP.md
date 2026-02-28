@@ -18,13 +18,13 @@ Create an empty repository on GitHub web UI (do not add README/license/gitignore
 Example URL:
 
 ```text
-https://github.com/<your-user-or-org>/lumit.git
+https://github.com/yc-lgtm/lumit-extension.git
 ```
 
 ## 3) Connect and push
 
 ```bash
-git remote add origin https://github.com/<your-user-or-org>/lumit.git
+git remote add origin https://github.com/yc-lgtm/lumit-extension.git
 git push -u origin main
 ```
 
@@ -38,7 +38,7 @@ git push -u origin main
 GitHub Pages URL will look like:
 
 ```text
-https://<your-user-or-org>.github.io/lumit/
+https://yc-lgtm.github.io/lumit-extension/
 ```
 
 Use this URL for:

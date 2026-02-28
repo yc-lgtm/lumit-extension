@@ -168,8 +168,8 @@ Artifacts:
 - After pushing to `main`, enable Pages in repo settings:
   - Settings -> Pages -> Build and deployment -> Source: `GitHub Actions`
 - Replace placeholder links in `website/index.html`:
-  - `https://github.com/your-org/lumit`
-  - `https://github.com/your-org/lumit/issues`
+  - `https://github.com/yc-lgtm/lumit-extension`
+  - `https://github.com/yc-lgtm/lumit-extension/issues`
   - `https://x.com/yourhandle`
 
 ## Controller APIs
