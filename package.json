@@ -1,0 +1,101 @@
+{
+  "name": "lumit",
+  "version": "2.0.0",
+  "description": "Floating Windows desktop AI assistant",
+  "type": "module",
+  "main": "apps/electron/main.js",
+  "author": "Lumit",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "set ELECTRON_RUN_AS_NODE=& electron .",
+    "controller": "node apps/controller/index.js",
+    "electron": "set ELECTRON_RUN_AS_NODE=& electron apps/electron/main.js",
+    "smoke": "node tests/smoke.js",
+    "check:controller-import": "node -e \"const t=setTimeout(()=>process.exit(0),1500); import('./apps/controller/index.js').then(()=>{clearTimeout(t);process.exit(0)}).catch((e)=>{console.error(e);process.exit(1)})\"",
+    "dist:dir": "electron-builder --dir",
+    "dist:win": "electron-builder --win nsis portable",
+    "extension:package": "cd vscode-extension && npx @vscode/vsce package",
+    "release:local": "npm run smoke && npm run dist:win && npm run extension:package"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "latest",
+    "@google-cloud/local-auth": "latest",
+    "@google/generative-ai": "latest",
+    "cheerio": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "glob": "latest",
+    "googleapis": "latest",
+    "openai": "latest",
+    "ws": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vscode/vsce": "^3.7.1",
+    "autoprefixer": "^10.4.27",
+    "clsx": "^2.1.1",
+    "electron": "latest",
+    "electron-builder": "^26.8.1",
+    "framer-motion": "^12.34.3",
+    "lucide-react": "^0.575.0",
+    "next-themes": "^0.4.6",
+    "postcss": "^8.5.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3"
+  },
+  "build": {
+    "appId": "com.lumit.desktop",
+    "productName": "Lumit",
+    "asar": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "apps/**/*",
+      "plugin/**/*",
+      "blender_addon/**/*",
+      "vscode-extension/**/*",
+      "scripts/**/*",
+      "data/**/*",
+      ".env.example",
+      "README.md",
+      "package.json"
+    ],
+    "extraMetadata": {
+      "main": "apps/electron/main.js"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "artifactName": "Lumit-${version}-setup-${arch}.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "Lumit-${version}-portable-${arch}.${ext}"
+    }
+  }
+}

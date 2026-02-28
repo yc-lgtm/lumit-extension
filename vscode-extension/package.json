@@ -1,0 +1,117 @@
+{
+  "name": "lumit-bridge",
+  "displayName": "Lumit",
+  "description": "Local AI bridge + sidebar assistant for Lumit",
+  "version": "1.1.0",
+  "publisher": "lumit",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ychou/lumit.git"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "lumit",
+    "ai",
+    "assistant",
+    "bridge",
+    "local"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:lumit.panel",
+    "onCommand:lumit.openPanel",
+    "onCommand:lumit.status",
+    "onCommand:lumit.restartBridge",
+    "onCommand:lumit.runPrompt"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "lumit",
+          "title": "Lumit",
+          "icon": "media/lumit.svg"
+        }
+      ]
+    },
+    "views": {
+      "lumit": [
+        {
+          "id": "lumit.panel",
+          "name": "Assistant"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "lumit.openPanel",
+        "title": "Lumit: Open Sidebar"
+      },
+      {
+        "command": "lumit.status",
+        "title": "Lumit: Show Bridge Status"
+      },
+      {
+        "command": "lumit.restartBridge",
+        "title": "Lumit: Restart Bridge Server"
+      },
+      {
+        "command": "lumit.runPrompt",
+        "title": "Lumit: Run Prompt"
+      }
+    ],
+    "configuration": {
+      "title": "Lumit",
+      "properties": {
+        "lumit.bridgePort": {
+          "type": "number",
+          "default": 8767,
+          "description": "Local HTTP bridge port used by Lumit."
+        },
+        "lumit.defaultModelFamily": {
+          "type": "string",
+          "default": "",
+          "description": "Preferred model family for /complete when not specified."
+        },
+        "lumit.autoStartBridge": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically start local bridge server on VS Code startup."
+        },
+        "lumit.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Lumit item in status bar."
+        }
+      }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "lumit.openPanel"
+        },
+        {
+          "command": "lumit.status"
+        },
+        {
+          "command": "lumit.restartBridge"
+        },
+        {
+          "command": "lumit.runPrompt"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "package": "vsce package"
+  },
+  "dependencies": {}
+}

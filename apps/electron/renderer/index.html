@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumit</title>
+  <style>
+    :root {
+      --bg0: #f7f9fd;
+      --bg1: #e6edf7;
+      --surface: #eef3fb;
+      --surface-raise: #f8fbff;
+      --surface-press: #dfe8f4;
+      --line: #c6cfdd;
+      --line-strong: #aebbd0;
+      --text: #213144;
+      --muted: #6f8097;
+      --accent: #5d81ff;
+      --accent-2: #476ff4;
+      --good: #16a34a;
+      --warn: #ca8a04;
+      --bad: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      color: var(--text);
+      font-family: "SF Pro Text", "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 520px at 14% -25%, rgba(255, 255, 255, 0.95), transparent 60%),
+        radial-gradient(980px 420px at 98% -10%, rgba(201, 218, 243, 0.6), transparent 58%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    .ambient {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(38px);
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    .ambient.a {
+      width: 300px;
+      height: 300px;
+      left: -80px;
+      top: -100px;
+      background: rgba(93, 129, 255, 0.36);
+    }
+
+    .ambient.b {
+      width: 360px;
+      height: 360px;
+      right: -150px;
+      bottom: -110px;
+      background: rgba(143, 163, 210, 0.34);
+    }
+
+    .shell {
+      height: 100vh;
+      display: flex;
+      justify-content: flex-end;
+      padding: 8px 0 8px 8px;
+    }
+
+    .panel {
+      width: min(440px, calc(100vw - 8px));
+      height: calc(100vh - 16px);
+      margin-right: 8px;
+      border: 1px solid rgba(163, 178, 200, 0.75);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(245, 250, 255, 0.96), rgba(230, 238, 248, 0.96));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94), 0 24px 56px rgba(56, 73, 101, 0.24);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .soft {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: linear-gradient(180deg, var(--surface-raise), var(--surface));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.96),
+        inset 0 -1px 0 rgba(172, 185, 203, 0.55),
+        0 1px 2px rgba(56, 72, 95, 0.09);
+      color: var(--text);
+    }
+
+    .header {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      border-bottom: 1px solid rgba(177, 191, 211, 0.68);
+      background: linear-gradient(180deg, rgba(248, 251, 255, 0.92), rgba(239, 245, 254, 0.92));
+      -webkit-app-region: drag;
+    }
+
+    .row { display: flex; align-items: center; gap: 8px; }
+    .sp { flex: 1; }
+
+    .logo {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: #32455f;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .logo-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #94b1ff, #4f76ff);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 4px 10px rgba(77, 106, 195, 0.35);
+    }
+
+    .badge {
+      padding: 4px 9px;
+      font-size: 11px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      -webkit-app-region: no-drag;
+    }
+
+    .badge.idle { color: #51637d; }
+    .badge.connected { color: #0b7a3e; border-color: #91ccac; background: linear-gradient(180deg, #effcf4, #deefe6); }
+    .badge.thinking { color: #8f5f07; border-color: #e6cb8e; background: linear-gradient(180deg, #fff8ea, #f4ebd5); }
+    .badge.error { color: #a11d2a; border-color: #e6b0b7; background: linear-gradient(180deg, #fff1f3, #f7e1e4); }
+
+    .menu-stop {
+      display: none;
+      padding: 5px 9px;
+      border-radius: 9px;
+      border: 1px solid #d49ba5;
+      background: linear-gradient(180deg, #fff4f5, #f8e1e4);
+      color: #a31d2b;
+      font-size: 11px;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(95, 35, 46, 0.15);
+    }
+    .menu-stop.show { display: inline-block; }
+
+    .model {
+      width: 100%;
+      padding: 10px;
+      font-size: 12px;
+      -webkit-app-region: no-drag;
+    }
+
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; -webkit-app-region: no-drag; }
+    .chip { padding: 5px 9px; border-radius: 999px; font-size: 10px; color: #6f8198; }
+    .chip.on { color: #16894a; border-color: #8ec8a9; background: linear-gradient(180deg, #edfcf4, #dff1e7); }
+    .chip.active { color: #2f4b94; border-color: #98afe5; background: linear-gradient(180deg, #eef3ff, #dfe8fb); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), inset 0 -1px 0 rgba(126, 149, 205, 0.35), 0 0 0 2px rgba(110, 136, 216, 0.15); }
+
+    .privacy {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      -webkit-app-region: no-drag;
+    }
+
+    .avatar-anchor { position: relative; -webkit-app-region: no-drag; }
+    .avatar-btn { padding: 3px 9px 3px 4px; display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; cursor: pointer; font-size: 11px; color: #42536a; }
+    .avatar-glyph { width: 24px; height: 24px; border-radius: 8px; border: 1px solid #b5c3d7; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95); background: linear-gradient(145deg, #cfdcf6, #7f9cf0); }
+    .avatar-glyph.neon { background: linear-gradient(145deg, #b2d7f3, #67a8df); }
+    .avatar-glyph.ember { background: linear-gradient(145deg, #f4c9ba, #ee9b7a); }
+    .avatar-glyph.sage { background: linear-gradient(145deg, #c9ead6, #7dc39b); }
+    .avatar-pop { position: absolute; right: 0; top: calc(100% + 9px); width: 230px; padding: 9px; display: grid; gap: 8px; z-index: 40; border: 1px solid var(--line-strong); border-radius: 14px; background: linear-gradient(180deg, #f7faff, #e8effa); box-shadow: 0 10px 28px rgba(78, 97, 128, 0.16); }
+    .avatar-pop.hidden { display: none; }
+    .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .avatar-opt { padding: 4px; cursor: pointer; }
+    .avatar-opt.active { border-color: #8ea7df; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 0 0 2px rgba(110, 136, 216, 0.16); }
+    .avatar-action { width: 100%; padding: 7px; font-size: 11px; text-align: left; cursor: pointer; }
+
+    .nav { display: flex; gap: 7px; padding: 9px 11px; border-bottom: 1px solid rgba(177, 191, 211, 0.68); background: linear-gradient(180deg, rgba(243, 248, 255, 0.88), rgba(233, 241, 252, 0.86)); }
+    .nav-btn { flex: 1; padding: 8px 7px; font-size: 11px; cursor: pointer; color: #5d6e85; }
+    .nav-btn.active { color: #33508f; border-color: #90a7de; background: linear-gradient(180deg, #eef3ff, #dfe8fa); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.97), inset 0 -1px 0 rgba(126, 149, 205, 0.35), 0 2px 6px rgba(84, 107, 148, 0.16); }
+
+    .thinking { height: 2px; background: linear-gradient(90deg, #90a8ff, #6b88fb, #90a8ff); background-size: 200% 100%; opacity: 0; animation: slide 1.6s linear infinite; }
+    .thinking.show { opacity: 1; }
+    .tetris { height: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; transition: height 0.16s ease; border-bottom: 1px solid transparent; background: rgba(231, 239, 250, 0.76); }
+    .tetris.show { height: 46px; border-bottom-color: rgba(177, 191, 211, 0.68); }
+    .tetris-grid { display: grid; grid-template-columns: repeat(4, 10px); grid-template-rows: repeat(4, 10px); gap: 3px; padding: 6px; border-radius: 10px; border: 1px solid #b9c7da; background: linear-gradient(180deg, #f4f8ff, #e3ecf8); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95); }
+    .tetris-cell { width: 10px; height: 10px; border-radius: 3px; background: #c4cfdf; }
+    .tetris-cell.on { background: linear-gradient(180deg, #96adff, #5d81ff); box-shadow: 0 0 7px rgba(93, 129, 255, 0.48); }
+
+    .views { position: relative; flex: 1; min-height: 0; }
+    .view { position: absolute; inset: 0; opacity: 0; pointer-events: none; display: flex; flex-direction: column; min-height: 0; transform: translateY(8px); transition: opacity 0.14s ease, transform 0.14s ease; }
+    .view.active { opacity: 1; pointer-events: auto; transform: none; }
+    .chat { flex: 1; overflow: auto; padding: 11px; display: flex; flex-direction: column; gap: 8px; }
+
+    .empty { margin: 11px; padding: 11px; display: grid; gap: 8px; border-radius: 14px; }
+    .empty.hidden { display: none; }
+    .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .quick button { padding: 8px; font-size: 11px; text-align: left; cursor: pointer; color: #425771; }
+
+    .msg { display: flex; flex-direction: column; gap: 4px; }
+    .msg.user { align-items: flex-end; }
+    .bubble { max-width: 92%; padding: 8px 10px; border-radius: 11px; white-space: pre-wrap; line-height: 1.38; font-size: 12px; border: 1px solid var(--line); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85); }
+    .msg.user .bubble { color: #27426f; border-color: #9ab0e2; background: linear-gradient(180deg, #eaf0ff, #dbe6fd); }
+    .msg.lumit .bubble { color: #2e3f55; border-color: #c2ccda; background: linear-gradient(180deg, #f8fbff, #ebf1f8); font-family: "SF Mono", Consolas, monospace; font-size: 11px; }
+    .step { display: flex; gap: 6px; font-family: "SF Mono", Consolas, monospace; font-size: 10px; color: #536880; }
+    .step .icon { width: 11px; height: 11px; display: grid; place-items: center; }
+    .step.live .icon { border: 2px solid #95a5bb; border-top-color: #4c678f; border-radius: 50%; font-size: 0; animation: spin 0.8s linear infinite; }
+    .step.ok { color: #0f7f40; }
+    .step.fail { color: #a11d2a; }
+
+    .pane { padding: 11px; overflow: auto; display: grid; gap: 9px; }
+    .file-tools { display: grid; grid-template-columns: 1fr auto auto; gap: 7px; }
+    .file-input, .file-depth { padding: 8px; font-size: 11px; }
+    .file-btn, .history-btn { padding: 7px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+    .history-btn { color: #9e1f2d; border-color: #d5a5ad; background: linear-gradient(180deg, #fff4f5, #f8e4e7); }
+    .tree { min-height: 185px; max-height: calc(100vh - 360px); overflow: auto; padding: 9px; border-radius: 12px; }
+    .tree details { margin-left: 4px; }
+    .tree summary { list-style: none; cursor: pointer; font-family: "SF Mono", Consolas, monospace; font-size: 11px; color: #36475f; padding: 3px 6px; border-radius: 8px; }
+    .tree summary:hover { background: rgba(188, 201, 223, 0.42); }
+    .tree-file { border: 0; box-shadow: none; background: transparent; color: #37506f; font-family: "SF Mono", Consolas, monospace; font-size: 11px; cursor: pointer; padding: 4px 6px; border-radius: 8px; width: 100%; text-align: left; }
+    .tree-file:hover { background: rgba(185, 199, 223, 0.42); }
+
+    .muted { font-size: 11px; color: var(--muted); font-family: "SF Mono", Consolas, monospace; }
+    .history-head, .settings-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .history-list { display: grid; gap: 7px; }
+    .history-item { padding: 8px; display: grid; gap: 4px; border-radius: 11px; }
+    .history-item p { margin: 0; font-size: 12px; color: #30435d; }
+    .meta { font-size: 10px; color: var(--muted); font-family: "SF Mono", Consolas, monospace; }
+    .card { padding: 10px; display: grid; gap: 7px; border-radius: 12px; }
+    .card h4 { margin: 0; font-size: 13px; color: #30435d; }
+    .card p { margin: 0; font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    .input-wrap { padding: 10px; border-top: 1px solid rgba(177, 191, 211, 0.68); display: grid; gap: 8px; background: linear-gradient(180deg, rgba(238, 244, 252, 0.93), rgba(229, 237, 248, 0.95)); }
+    .attachments { display: grid; gap: 6px; }
+    .attachment-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 7px; border: 1px solid var(--line); border-radius: 10px; background: linear-gradient(180deg, #f7faff, #eaf1fb); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96); font-size: 10px; font-family: "SF Mono", Consolas, monospace; color: #39506d; }
+    .attachment-item button { padding: 4px 7px; font-size: 10px; cursor: pointer; border-color: #d5a5ad; background: linear-gradient(180deg, #fff4f5, #f8e4e7); color: #a11d2a; border-radius: 8px; }
+
+    .tool-row { position: relative; display: flex; gap: 6px; }
+    .tool-btn, .tool-pill { padding: 7px 10px; font-size: 10px; cursor: pointer; border-radius: 999px; }
+    .tool-menu { position: absolute; top: 100%; left: 0; margin-top: 6px; width: 192px; overflow: hidden; z-index: 30; border: 1px solid var(--line-strong); border-radius: 12px; background: linear-gradient(180deg, #f8fbff, #e7eef9); box-shadow: 0 10px 28px rgba(78, 97, 128, 0.16); }
+    .tool-menu.hidden, .tool-pill.hidden { display: none; }
+    .tool-item { width: 100%; padding: 8px; border: 0; border-bottom: 1px solid #d4dce9; background: transparent; box-shadow: none; border-radius: 0; text-align: left; font-size: 10px; color: #3f536d; cursor: pointer; }
+    .tool-item:last-child { border-bottom: 0; }
+    .tool-item:hover { background: rgba(173, 190, 220, 0.35); }
+    .tool-pill { color: #2f5b9c; border-color: #9db7e3; background: linear-gradient(180deg, #ecf3ff, #deebff); }
+
+    .input-row { display: grid; grid-template-columns: 1fr auto auto auto; gap: 7px; align-items: end; }
+    textarea { width: 100%; min-height: 40px; max-height: 112px; resize: none; padding: 9px 10px; font-size: 13px; line-height: 1.3; border-radius: 12px; color: #24364d; }
+    .btn { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 11px; background: linear-gradient(180deg, var(--surface-raise), var(--surface)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), inset 0 -1px 0 rgba(173, 185, 203, 0.55), 0 1px 2px rgba(56, 72, 95, 0.09); color: #425a78; display: grid; place-items: center; cursor: pointer; font-size: 14px; }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-send { color: #fff; border-color: #5679dd; background: linear-gradient(180deg, #89a5ff, #5d81ff); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 4px 10px rgba(73, 105, 194, 0.32); }
+    .btn-mic.recording { color: #a11d2a; border-color: #d5a5ad; background: linear-gradient(180deg, #fff2f4, #f8e3e6); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 6px rgba(220, 38, 38, 0.08); }
+    .stop-btn { display: none; width: 100%; padding: 9px; font-size: 11px; border-color: #d39fa8; background: linear-gradient(180deg, #fff3f4, #f7e3e6); color: #a11d2a; cursor: pointer; }
+    .stop-btn.show { display: block; }
+    .hints { display: flex; justify-content: space-between; gap: 8px; font-size: 10px; color: var(--muted); font-family: "SF Mono", Consolas, monospace; flex-wrap: wrap; }
+
+    @keyframes slide { from { background-position: 200% 0; } to { background-position: 0 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 520px) {
+      .panel { border-radius: 16px; margin-right: 0; }
+      .quick { grid-template-columns: 1fr; }
+      .file-tools { grid-template-columns: 1fr; }
+      .hints { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient a"></div>
+  <div class="ambient b"></div>
+
+  <div class="shell">
+    <div class="panel">
+      <div class="header">
+        <div class="row">
+          <div class="logo"><span class="logo-dot"></span>LUMIT</div>
+          <div id="statusBadge" class="badge soft idle"><svg id="statusIcon" width="12" height="12" viewBox="0 0 24 24"><path d="M4 12h16" stroke="currentColor" stroke-width="2" fill="none"/></svg><span id="statusText">Ready</span></div>
+          <button id="menuStopBtn" class="menu-stop">Stop</button>
+          <div class="sp"></div>
+          <div class="avatar-anchor" id="avatarAnchor">
+            <button id="avatarBtn" class="avatar-btn soft" aria-expanded="false"><div id="avatarGlyphBtn" class="avatar-glyph"></div><span id="avatarLabel">Prism</span></button>
+            <div id="avatarPopover" class="avatar-pop hidden">
+              <div class="row"><div id="avatarGlyphMain" class="avatar-glyph"></div><div><div style="font-size:12px;font-weight:600">You</div><div class="muted">Active now</div></div></div>
+              <div id="avatarGrid" class="avatar-grid">
+                <button class="avatar-opt soft active" data-avatar="prism"><div class="avatar-glyph"></div></button>
+                <button class="avatar-opt soft" data-avatar="neon"><div class="avatar-glyph neon"></div></button>
+                <button class="avatar-opt soft" data-avatar="ember"><div class="avatar-glyph ember"></div></button>
+                <button class="avatar-opt soft" data-avatar="sage"><div class="avatar-glyph sage"></div></button>
+              </div>
+              <button id="avatarSettings" class="avatar-action soft">Settings</button>
+              <button id="avatarSignout" class="avatar-action soft">Sign out</button>
+            </div>
+          </div>
+        </div>
+        <select id="modelSelect" class="model soft">
+          <option value="claude|claude-opus-4-5">claude-opus-4-5</option>
+          <option value="claude|claude-sonnet-4-6">claude-sonnet-4-6</option>
+          <option value="openai|gpt-5">gpt-5</option>
+          <option value="openai|gpt-5-thinking">gpt-5-thinking</option>
+          <option value="gemini|gemini-2.0-flash">gemini-2.0-flash</option>
+          <option value="gemini|gemini-2.5-pro">gemini-2.5-pro</option>
+          <option value="grok|grok-3">grok-3</option>
+          <option value="glm|glm-4">glm-4</option>
+          <option value="codex|codex-browser">codex-browser</option>
+        </select>
+        <div class="chips" id="chipRow">
+          <div id="chip-studio" class="chip soft">STUDIO</div><div id="chip-blender" class="chip soft">BLENDER</div><div id="chip-slides" class="chip soft">SLIDES</div><div id="chip-gmail" class="chip soft">GMAIL</div><div id="chip-files" class="chip soft">FILES</div><div id="chip-web" class="chip soft">WEB</div><div id="chip-codex" class="chip soft">CODEX</div>
+        </div>
+        <label class="privacy"><input id="shareFilesToggle" type="checkbox" />Share attached file text with model (off by default)</label>
+      </div>
+
+      <div class="nav" id="navBar">
+        <button class="nav-btn soft active" data-view="chat">Chat</button>
+        <button class="nav-btn soft" data-view="files">Files</button>
+        <button class="nav-btn soft" data-view="history">History</button>
+        <button class="nav-btn soft" data-view="settings">Settings</button>
+      </div>
+      <div id="thinkBar" class="thinking"></div>
+      <div id="tetrisLoader" class="tetris"><div id="tetrisGrid" class="tetris-grid"></div></div>
+
+      <div class="views">
+        <section id="view-chat" class="view active">
+          <div id="emptyState" class="empty soft">
+            <div style="font-size:13px;font-weight:650">Neat workspace assistant</div>
+            <div class="muted">Use quick prompts or type your own.</div>
+            <div class="quick">
+              <button class="soft" data-prompt="Scan this workspace and summarize key files I should edit first.">Scan workspace</button>
+              <button class="soft" data-prompt="Create a Roblox baseplate with a spawn and simple terrain.">Roblox baseplate</button>
+              <button class="soft" data-prompt="Read attached files and implement TODO items safely.">Implement TODOs</button>
+              <button class="soft" data-prompt="Generate a clean coding roadmap for this project.">Coding roadmap</button>
+            </div>
+          </div>
+          <div id="chat" class="chat"></div>
+        </section>
+        <section id="view-files" class="view pane">
+          <div class="file-tools">
+            <input id="fileTreeDir" class="file-input soft" type="text" value="." />
+            <select id="fileTreeDepth" class="file-depth soft"><option value="2">Depth 2</option><option value="3" selected>Depth 3</option><option value="4">Depth 4</option><option value="5">Depth 5</option></select>
+            <button id="refreshTreeBtn" class="file-btn soft">Refresh</button>
+          </div>
+          <div id="fileTree" class="tree soft"><div class="muted">File tree not loaded yet.</div></div>
+        </section>
+        <section id="view-history" class="view pane">
+          <div class="history-head"><div style="font-size:13px;font-weight:650">Prompt History</div><button id="clearHistoryBtn" class="history-btn soft">Clear</button></div>
+          <div id="historyList" class="history-list"><div class="muted">No prompts yet.</div></div>
+        </section>
+        <section id="view-settings" class="view pane">
+          <div class="settings-head"><div style="font-size:13px;font-weight:650">Safety & Behavior</div></div>
+          <div class="card soft">
+            <h4>Local-only guardrails</h4>
+            <p>When enabled, Lumit blocks web-target prompts and keeps file sharing off unless you opt in.</p>
+            <label><input id="localOnlyToggle" type="checkbox" checked /> Enable local-only mode</label>
+          </div>
+          <div class="card soft"><h4>File handling</h4><p>Use the Files view to browse your workspace and click a file to attach it.</p></div>
+        </section>
+      </div>
+
+      <div class="input-wrap">
+        <div id="attachments" class="attachments"></div>
+        <div class="tool-row">
+          <button id="toolTriggerBtn" class="tool-btn soft">Tools</button>
+          <div id="toolMenu" class="tool-menu hidden"></div>
+          <button id="activeToolPill" class="tool-pill soft hidden"><span id="activeToolText"></span> x</button>
+        </div>
+        <div class="input-row">
+          <textarea id="input" class="soft" placeholder="Tell me what to build..."></textarea>
+          <button class="btn" id="attachBtn" title="Attach">+</button>
+          <button class="btn btn-mic" id="micBtn" title="Voice">Mic</button>
+          <button class="btn btn-send" id="sendBtn" title="Send">Go</button>
+        </div>
+        <button id="stopBtn" class="stop-btn soft">STOP CURRENT TASK</button>
+        <div class="hints"><span>Toggle: Ctrl+Shift+L | Focus: Ctrl+Shift+Space</span><span>Quit: Ctrl+Shift+Q | Clear: Ctrl+Shift+X</span></div>
+      </div>
+    </div>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+﻿node_modules/
+data/
+credentials/
+.env
+*.log
+*.tmp
+.vscode/
+vscode-extension/*.vsix
+release/
+*.exe.blockmap

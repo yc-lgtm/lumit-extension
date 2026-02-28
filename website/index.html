@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lumit | AI Builder for Roblox Workflows</title>
+  <meta name="description" content="Lumit is a desktop AI builder for Roblox workflows with local-first controls, VS Code bridge, and multi-agent execution." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <header class="shell">
+    <nav class="nav">
+      <a class="brand" href="#top">
+        <span class="brand-mark">L</span>
+        <span>Lumit</span>
+      </a>
+      <div class="links">
+        <a href="#features">Features</a>
+        <a href="#setup">Setup</a>
+        <a href="#downloads">Downloads</a>
+        <a href="#support">Support</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero card">
+      <p class="eyebrow">Desktop AI Assistant</p>
+      <h1>Build Roblox workflows faster with control, safety, and clarity.</h1>
+      <p class="sub">
+        Lumit combines a local desktop panel, orchestrated agents, and a VS Code bridge to help you plan, generate, and execute development tasks.
+      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="#downloads">Get Lumit</a>
+        <a class="btn" href="#setup">How To Connect APIs</a>
+      </div>
+      <ul class="meta">
+        <li>Local-first controls</li>
+        <li>VS Code model bridge</li>
+        <li>Roblox Studio + Blender paths</li>
+      </ul>
+    </section>
+
+    <section id="features" class="grid-3">
+      <article class="card">
+        <h2>Prompt + Execute</h2>
+        <p>Use one chat surface for planning, routing, and action steps with status updates.</p>
+      </article>
+      <article class="card">
+        <h2>File-Aware</h2>
+        <p>Attach files directly, browse file trees, and run scoped edits with explicit path safety checks.</p>
+      </article>
+      <article class="card">
+        <h2>VS Code Companion</h2>
+        <p>Bridge through localhost and use VS Code language models for completions from Lumit.</p>
+      </article>
+      <article class="card">
+        <h2>Safety Controls</h2>
+        <p>Local-only mode, clear error handling, and integration checks before execution.</p>
+      </article>
+      <article class="card">
+        <h2>Live Workflow UI</h2>
+        <p>Structured history, navigation, tool chips, and progress indicators including Tetris loader.</p>
+      </article>
+      <article class="card">
+        <h2>Extensible Architecture</h2>
+        <p>Controller + agents + bridge modules with predictable APIs and cancellation support.</p>
+      </article>
+    </section>
+
+    <section id="setup" class="card">
+      <h2>Quick Setup</h2>
+      <ol class="steps">
+        <li>Install Lumit desktop app and start the controller.</li>
+        <li>Install Lumit VS Code extension and confirm bridge status.</li>
+        <li>Add provider keys in <code>.env</code> for model and web services.</li>
+      </ol>
+      <div class="codebox">
+        <pre><code>ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+GEMINI_API_KEY=
+SERPER_API_KEY=
+GOOGLE_CREDENTIALS_PATH=./credentials/google-credentials.json</code></pre>
+      </div>
+    </section>
+
+    <section id="downloads" class="grid-2">
+      <article class="card">
+        <h2>Lumit App</h2>
+        <p>Windows installer and portable build.</p>
+        <ul>
+          <li><code>release/Lumit-2.0.0-setup-x64.exe</code></li>
+          <li><code>release/Lumit-2.0.0-portable-x64.exe</code></li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>VS Code Extension</h2>
+        <p>Install the packaged extension (VSIX) locally or publish to Marketplace.</p>
+        <ul>
+          <li><code>vscode-extension/lumit-bridge-1.1.0.vsix</code></li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <footer id="support" class="shell">
+    <div class="foot card">
+      <p>© <span id="year"></span> Lumit</p>
+      <div class="links">
+        <a href="https://github.com/your-org/lumit" target="_blank" rel="noreferrer">Source</a>
+        <a href="https://github.com/your-org/lumit/issues" target="_blank" rel="noreferrer">Support</a>
+        <a href="https://x.com/yourhandle" target="_blank" rel="noreferrer">Twitter</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = String(new Date().getFullYear());
+  </script>
+</body>
+</html>
